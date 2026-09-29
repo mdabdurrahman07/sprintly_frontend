@@ -10,13 +10,6 @@ export function HeroSection() {
       className="pt-20 pb-24 md:pb-28 text-center px-4 max-w-5xl mx-auto"
       id="product"
     >
-      {/* <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-subtle text-primary-subtle-foreground text-xs font-semibold mb-6 border border-primary-border shadow-sm">
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary/75 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-        </span>
-        New · Built for high-velocity teams
-      </div> */}
       <SectionBadge icon={true} content="New · Built for high-velocity teams" />
 
       <Heading as="h1" className="mb-6">
