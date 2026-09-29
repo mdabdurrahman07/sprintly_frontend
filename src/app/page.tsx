@@ -1,8 +1,13 @@
+import { Navbar } from "@/components/sections/Navbar";
 import { Button } from "@/components/ui/button";
 import React from "react";
 
-const HomePage = () => {
-  return <div>This home Page</div>;
+const RootPage = () => {
+  return (
+    <>
+      <Navbar />
+    </>
+  );
 };
 
-export default HomePage;
+export default RootPage;
