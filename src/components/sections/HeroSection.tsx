@@ -23,7 +23,7 @@ export function HeroSection() {
 
       <div className="flex flex-wrap gap-4 justify-center items-center mb-6">
         <Button size="lg">
-          <Link href="#pricing">Start free trial</Link>
+          <Link href="#pricing">See our plans</Link>
         </Button>
         <Button size="lg" variant="secondary">
           <Link href="#how-it-works">See how it works</Link>
