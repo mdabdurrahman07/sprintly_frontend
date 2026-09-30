@@ -1,0 +1,32 @@
+export interface IMemberRegisterPayload {
+  name: string;
+  email: string;
+  password: string;
+  member: {
+    skills: string[];
+  };
+}
+export interface IManagerRegisterPayload {
+  name: string;
+  email: string;
+  password: string;
+  manager: {
+    bio?: string;
+    department?: string;
+    avatarUrl?: string;
+    phoneNumber?: string;
+  };
+}
+
+export interface IUserLoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface IVerifyEmailPayload {
+  email: string;
+  otp: string;
+}
+export interface IGoogleLoginPayload {
+  idToken: string;
+}
