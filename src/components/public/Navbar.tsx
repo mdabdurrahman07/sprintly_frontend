@@ -43,7 +43,7 @@ export function Navbar() {
             Log in
           </Link>
           <Button size="md">
-            <Link href="#pricing" className="flex items-center gap-1.5">
+            <Link href="/registration" className="flex items-center gap-1.5">
               <span>Get started</span>
               <svg
                 className="w-3.5 h-3.5"
