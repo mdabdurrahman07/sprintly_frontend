@@ -1,6 +1,6 @@
 import Logo from "@/components/shared/Logo";
 import SectionBadge from "@/components/shared/SectionBadge";
-import { SectionHeader } from "@/components/ui/typography";
+
 import React from "react";
 
 const LoginPage = () => {
@@ -11,7 +11,7 @@ const LoginPage = () => {
         <section className="lg:w-[46%] xl:w-[44%] bg-[#EDF3FC] rounded-4xl p-8 sm:p-12 xl:p-14 flex flex-col justify-between relative overflow-hidden">
           <div className="space-y-8 max-w-xl">
             {/* Logo Header */}
-            <Logo />
+           <Logo/>
 
             <SectionBadge icon={true} content="AGILE WORKSPACES" />
 
