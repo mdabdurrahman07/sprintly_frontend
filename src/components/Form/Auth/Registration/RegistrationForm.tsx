@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import ManagerRegistrationForm from "./ManagerRegistrationForm";
 import MemberRegistrationForm from "./MemberRegistrationForm";
@@ -12,7 +12,7 @@ const RegistrationForm = () => {
   const [role, setRole] = useState<RoleType>("member");
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-2.5">
       {/* Header */}
       <div className="text-left">
         <h2 className="text-2xl lg:text-[28px] font-bold text-foreground tracking-tight">
@@ -63,7 +63,7 @@ const RegistrationForm = () => {
       )}
 
       {/* Social Divider */}
-      <FieldSeparator>Or continue with</FieldSeparator>
+      <FieldSeparator className="mt-4 mb-2">Or continue with</FieldSeparator>
 
       {/* Google OAuth Section */}
       {/* <div
