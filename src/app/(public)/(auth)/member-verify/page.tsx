@@ -1,10 +1,12 @@
-import MemberEmailVerify from "@/components/Modules/Auth/MemberEmailVerify";
-import React from "react";
+import VerifyAccountForm from "@/components/Form/Auth/VerifyAccountForm/VerifyAccountForm";
+import React, { Suspense } from "react";
 
 const memberVerifyPage = () => {
   return (
     <div>
-      <MemberEmailVerify />
+      {/* <Suspense fallback={<p>Loading...</p>}> */}
+    <VerifyAccountForm mode="member"/>
+      {/* </Suspense> */}
     </div>
   );
 };
