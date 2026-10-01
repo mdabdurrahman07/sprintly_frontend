@@ -4,9 +4,9 @@ import React, { Suspense } from "react";
 const managerVerifyPage = () => {
   return (
     <div>
-      {/* <Suspense fallback={<p>Loading...</p>}> */}
+      <Suspense fallback={<p>Loading...</p>}>
         <VerifyAccountForm mode="manager" />
-      {/* </Suspense> */}
+      </Suspense>
     </div>
   );
 };

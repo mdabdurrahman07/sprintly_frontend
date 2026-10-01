@@ -198,6 +198,7 @@ const VerifyAccountForm = ({
           {/* Submit Action */}
           <Button
             type="submit"
+            className="w-full"
             disabled={isSubmitting || otp.length !== 6}
           >
             {isSubmitting ? "Verifying..." : "Verify email"}

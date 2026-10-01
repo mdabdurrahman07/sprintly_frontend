@@ -317,7 +317,7 @@ const MemberRegistrationForm = () => {
 
         {/* Submit Button */}
         <div className="pt-2">
-          <Button type="submit" className="w-full">
+          <Button disabled={memberRegisterPending} type="submit" className="w-full">
             {memberRegisterPending ? (
               <div className="w-8 h-8 rounded-full border-2 border-zinc-200 border-t-blue-600 animate-spin" />
             ) : (

@@ -4,9 +4,9 @@ import React, { Suspense } from "react";
 const memberVerifyPage = () => {
   return (
     <div>
-      {/* <Suspense fallback={<p>Loading...</p>}> */}
-    <VerifyAccountForm mode="member"/>
-      {/* </Suspense> */}
+      <Suspense fallback={<p>Loading...</p>}>
+        <VerifyAccountForm mode="member" />
+      </Suspense>
     </div>
   );
 };
