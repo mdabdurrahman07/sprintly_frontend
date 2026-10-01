@@ -1,12 +1,12 @@
 import { ReactNode } from "react";
 import QueryProvider from "./QueryProvider";
-import { GooeyToaster } from "goey-toast";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 
 export default function Providers({ children }: { children: ReactNode }) {
   return (
     <QueryProvider>
-      {children}
+      <TooltipProvider>{children}</TooltipProvider>
     </QueryProvider>
   );
 }
