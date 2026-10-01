@@ -21,6 +21,9 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useMemberRegistration } from "@/hooks";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const memberFormSchema = MemberRegisterSchema.extend({
   confirmPassword: z.string().min(8, "Please confirm your password"),
@@ -32,9 +35,12 @@ const memberFormSchema = MemberRegisterSchema.extend({
 type MemberFormValues = z.infer<typeof memberFormSchema>;
 
 const MemberRegistrationForm = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [skillInput, setSkillInput] = useState("");
+  const { mutate: memberRegister, isPending: memberRegisterPending } =
+    useMemberRegistration();
   const form = useForm({
     defaultValues: {
       name: "",
@@ -50,7 +56,26 @@ const MemberRegistrationForm = () => {
     },
     onSubmit: async ({ value }) => {
       const { confirmPassword, ...payload } = value;
-      console.log("Member Registration Payload:", payload);
+      memberRegister(payload, {
+        onSuccess: (res) => {
+          if (!res.success) {
+            toast.error("Server Failure", {
+              description: "Something went wrong. Please try again",
+            });
+          }
+          toast.success("Registration Successful", {
+            description: "Please verify your account",
+          });
+          const params = new URLSearchParams({ email: payload.email });
+          router.push(`/member-verify?${params.toString()}`);
+        },
+        onError: (err) => {
+          toast.error("Authorization failure", {
+            description:
+              err.message || "Something went wrong. Please try again",
+          });
+        },
+      });
     },
   });
   return (
@@ -292,12 +317,15 @@ const MemberRegistrationForm = () => {
 
         {/* Submit Button */}
         <div className="pt-2">
-          <Button
-            type="submit"
-            className="w-full py-3 px-6 rounded-full bg-primary hover:bg-primary-hover text-primary-foreground font-medium text-sm shadow-xs transition-all duration-150 flex items-center justify-center gap-2 h-auto cursor-pointer"
-          >
-            <span>Create member account</span>
-            <ArrowRight className="w-4 h-4" />
+          <Button type="submit" className="w-full">
+            {memberRegisterPending ? (
+              <div className="w-8 h-8 rounded-full border-2 border-zinc-200 border-t-blue-600 animate-spin" />
+            ) : (
+              <div className="flex items-center justify-center gap-4">
+                <span>Create member account</span>
+                <ArrowRight className="w-4 h-4" />
+              </div>
+            )}
           </Button>
         </div>
       </FieldGroup>

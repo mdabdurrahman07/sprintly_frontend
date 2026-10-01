@@ -1,5 +1,4 @@
 import LoginForm from "@/components/Form/Auth/Login/LoginForm";
-import RegistrationForm from "@/components/Form/Auth/Registration/RegistrationForm";
 import Logo from "@/components/shared/Logo";
 import SectionBadge from "@/components/shared/SectionBadge";
 import { Activity, Check, CreditCard, Users } from "lucide-react";
