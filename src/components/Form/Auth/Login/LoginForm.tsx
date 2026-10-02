@@ -17,6 +17,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLogin } from "@/hooks";
 import { toast } from "sonner";
+import GoogleLoginBtn from "@/components/Modules/GoogleLogin/GoogleLoginBtn";
 
 type LoginFormValues = z.infer<typeof LoginSchema>;
 
@@ -161,6 +162,8 @@ const LoginForm = () => {
       </form>
 
       <FieldSeparator className="mt-4 mb-2">Or continue with</FieldSeparator>
+
+      <GoogleLoginBtn/>
 
       <div className="pt-2 text-center text-xs text-muted-foreground">
         Don't have an account?{" "}
