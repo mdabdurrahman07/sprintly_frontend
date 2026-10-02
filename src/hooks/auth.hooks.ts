@@ -7,6 +7,7 @@ import {
   memberRegisterApi,
   memberVerifyApi,
   refreshTokenApi,
+  userLogout,
 } from "@/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -53,3 +54,9 @@ export const useGoogleLogin = () => {
     mutationFn: googleLoginApi,
   });
 };
+
+export function useLogout() {
+  return useMutation({
+    mutationFn: userLogout,
+  });
+}

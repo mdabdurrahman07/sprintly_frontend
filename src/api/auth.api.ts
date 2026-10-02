@@ -53,3 +53,7 @@ export const googleLoginApi = (payload: IGoogleLoginPayload) => {
     body: payload,
   });
 };
+
+export function userLogout() {
+  return apiClient(`${prefix}/logout`, { method: "POST" });
+}
