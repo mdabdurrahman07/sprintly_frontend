@@ -1,3 +1,4 @@
+"use client"
 import { useGetMe } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { ReactNode, useEffect } from "react";

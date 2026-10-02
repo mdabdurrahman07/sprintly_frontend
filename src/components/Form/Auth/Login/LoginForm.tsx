@@ -14,11 +14,17 @@ import { Input } from "@/components/ui/input";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useLogin } from "@/hooks";
+import { toast } from "sonner";
 
 type LoginFormValues = z.infer<typeof LoginSchema>;
 
 const LoginForm = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const { mutate: login, isPending: loginPending } = useLogin();
+
   const form = useForm({
     defaultValues: {
       email: "",
@@ -28,7 +34,24 @@ const LoginForm = () => {
       onSubmit: LoginSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log("Member Registration Payload:", value);
+      const loginData = {
+        email: value.email,
+        password: value.password,
+      };
+      login(loginData, {
+        onSuccess: (res) => {
+          toast.success("Login Success", {
+            description: "Welcome back",
+          });
+          router.push("/");
+        },
+        onError: (err) => {
+          toast.error("LoginFailed", {
+            description:
+              err.message || "Something went wrong. Please try again",
+          });
+        },
+      });
     },
   });
   return (
@@ -123,14 +146,17 @@ const LoginForm = () => {
 
           {/* Submit Button */}
           <div className="pt-2">
-            <Button
-              type="submit"
-              className="w-full py-3 px-6 rounded-full bg-primary hover:bg-primary-hover text-primary-foreground font-medium text-sm shadow-xs transition-all duration-150 flex items-center justify-center gap-2 h-auto cursor-pointer"
-            >
-              <span>Login</span>
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </div>
+                <Button disabled={loginPending} type="submit" className="w-full">
+                  {loginPending ? (
+                    <div className="w-8 h-8 rounded-full border-2 border-zinc-200 border-t-blue-600 animate-spin" />
+                  ) : (
+                    <div className="flex items-center justify-center gap-4">
+                      <span>Login</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
+                  )}
+                </Button>
+              </div>
         </FieldGroup>
       </form>
 
