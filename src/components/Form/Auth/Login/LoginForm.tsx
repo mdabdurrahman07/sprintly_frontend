@@ -26,21 +26,18 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { mutate: login, isPending: loginPending } = useLogin();
 
-  const form = useForm({
-    defaultValues: {
-      email: "",
-      password: "",
-    } as LoginFormValues,
-    validators: {
-      onSubmit: LoginSchema,
-    },
-    onSubmit: async ({ value }) => {
-      const loginData = {
-        email: value.email,
-        password: value.password,
-      };
-      login(loginData, {
-        onSuccess: (res) => {
+  const loginWithCredentials = (email: string, password: string) => {
+    if (!email || !password) {
+      toast.error("Demo login unavailable", {
+        description: "This demo account is not configured.",
+      });
+      return;
+    }
+
+    login(
+      { email, password },
+      {
+        onSuccess: () => {
           toast.success("Login Success", {
             description: "Welcome back",
           });
@@ -52,9 +49,41 @@ const LoginForm = () => {
               err.message || "Something went wrong. Please try again",
           });
         },
-      });
+      },
+    );
+  };
+
+  const form = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    } as LoginFormValues,
+    validators: {
+      onSubmit: LoginSchema,
+    },
+    onSubmit: async ({ value }) => {
+      loginWithCredentials(value.email, value.password);
     },
   });
+
+  const demoAccounts = [
+    {
+      label: "Admin",
+      email: process.env.NEXT_PUBLIC_DEMO_ADMIN_EMAIL,
+      password: process.env.NEXT_PUBLIC_DEMO_ADMIN_PASSWORD,
+    },
+    {
+      label: "Manager",
+      email: process.env.NEXT_PUBLIC_DEMO_MANAGER_EMAIL,
+      password: process.env.NEXT_PUBLIC_DEMO_MANAGER_PASSWORD,
+    },
+    {
+      label: "Member",
+      email: process.env.NEXT_PUBLIC_DEMO_MEMBER_EMAIL,
+      password: process.env.NEXT_PUBLIC_DEMO_MEMBER_PASSWORD,
+    },
+  ];
+
   return (
     <div className="w-full space-y-2.5">
       <div className="text-left">
@@ -147,26 +176,51 @@ const LoginForm = () => {
 
           {/* Submit Button */}
           <div className="pt-2">
-                <Button disabled={loginPending} type="submit" className="w-full">
-                  {loginPending ? (
-                    <div className="w-8 h-8 rounded-full border-2 border-zinc-200 border-t-blue-600 animate-spin" />
-                  ) : (
-                    <div className="flex items-center justify-center gap-4">
-                      <span>Login</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
-                  )}
-                </Button>
-              </div>
+            <Button disabled={loginPending} type="submit" className="w-full">
+              {loginPending ? (
+                <div className="w-8 h-8 rounded-full border-2 border-zinc-200 border-t-blue-600 animate-spin" />
+              ) : (
+                <div className="flex items-center justify-center gap-4">
+                  <span>Login</span>
+                  <ArrowRight className="w-4 h-4" />
+                </div>
+              )}
+            </Button>
+          </div>
         </FieldGroup>
       </form>
 
       <FieldSeparator className="mt-4 mb-2">Or continue with</FieldSeparator>
 
-      <GoogleLoginBtn/>
+      <GoogleLoginBtn />
+
+      <div className="space-y-2">
+        <p className="text-center text-xs text-muted-foreground">
+          Or try a demo account
+        </p>
+        <div className="grid grid-cols-3 gap-2">
+          {demoAccounts.map((account) => (
+            <Button
+              key={account.label}
+              type="button"
+              variant="primary"
+              disabled={loginPending}
+              onClick={() =>
+                loginWithCredentials(
+                  account.email ?? "",
+                  account.password ?? "",
+                )
+              }
+              className="w-full"
+            >
+              {account.label}
+            </Button>
+          ))}
+        </div>
+      </div>
 
       <div className="pt-2 text-center text-xs text-muted-foreground">
-        Don't have an account?{" "}
+        Don&apos;t have an account?{" "}
         <Link
           href="/registration"
           className="font-medium text-primary hover:underline ml-1"

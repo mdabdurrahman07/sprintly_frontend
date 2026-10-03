@@ -26,7 +26,6 @@ const dashboardRoute: Record<userRole, string> = {
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { data, isPending } = useGetMe();
-  console.log("currentUser", data);
   const { mutate: logout } = useLogout();
   const queryClient = useQueryClient();
   const role = data?.data?.role as userRole | undefined;
