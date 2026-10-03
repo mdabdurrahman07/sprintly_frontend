@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Logo from "../shared/Logo";
 
 export function Footer() {
   return (
@@ -6,26 +7,7 @@ export function Footer() {
       <div className="max-w-6xl mx-auto p-10 md:p-12 bg-card shadow-sm border border-border rounded-2xl">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
           <div className="md:col-span-5 flex flex-col items-start">
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
-                <svg
-                  className="w-3.5 h-3.5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2.5"
-                  viewBox="0 0 24 24"
-                >
-                  <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                  <polyline points="2 17 12 22 22 17"></polyline>
-                  <polyline points="2 12 17 22 12"></polyline>
-                </svg>
-              </div>
-              <span className="font-heading text-lg font-bold tracking-tight text-foreground">
-                Sprintly
-              </span>
-            </div>
+           <div className="mb-4"> <Logo/></div>
             <p className="text-sm text-muted-foreground max-w-sm leading-relaxed mb-6">
               Utilitarian project tracking for high-velocity teams. Move from
               ideas to execution with clear velocity.
