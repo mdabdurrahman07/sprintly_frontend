@@ -12,7 +12,7 @@ export interface IUpdatePlanPayload {
 
 export interface Plan {
   id: string;
-  name: string;
+  name: SubscriptionPlan;
   price: string;
   currency: string;
   description: string | null;

@@ -13,7 +13,7 @@ export const planCreateApi = (payload: ICreatePlanPayload) => {
 };
 
 export const planGetApi = () => {
-  return apiClient<ApiResponse<Plan[]>>(`${prefix}/plan`, { method: "GET" });
+  return apiClient<ApiResponse<Plan[]>>(`${prefix}/`, { method: "GET" });
 };
 
 export const planUpdateApi = (id: string, payload: IUpdatePlanPayload) => {

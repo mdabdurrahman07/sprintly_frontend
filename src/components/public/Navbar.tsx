@@ -80,35 +80,36 @@ export function Navbar() {
               </Button>
             ) : (
               <>
-                {!isPending && !isAuthenticated && (
+                {/* {!isPending && !isAuthenticated && (
                   <>
-                    <Link
-                      href="/login"
-                      className="text-sm font-medium text-muted-foreground hover:text-foreground px-3 py-1.5 transition-colors"
-                    >
-                      Log in
-                    </Link>
-                    <Button size="md">
-                      <Link
-                        href="/registration"
-                        className="flex items-center gap-1.5"
-                      >
-                        <span>Get started</span>
-                        <svg
-                          className="w-3.5 h-3.5"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2.5"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M5 12h14M12 5l7 7-7 7"></path>
-                        </svg>
-                      </Link>
-                    </Button>
+                   
                   </>
-                )}
+                )} */}
+                <Link
+                  href="/login"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground px-3 py-1.5 transition-colors"
+                >
+                  Log in
+                </Link>
+                <Button size="md">
+                  <Link
+                    href="/registration"
+                    className="flex items-center gap-1.5"
+                  >
+                    <span>Get started</span>
+                    <svg
+                      className="w-3.5 h-3.5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2.5"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                  </Link>
+                </Button>
               </>
             ))}
         </div>

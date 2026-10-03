@@ -39,15 +39,6 @@ const DashboardSidebar = ({ role }: { role: userRole }) => {
           </div>
           <ChevronsUpDown className="size-4 text-zinc-400" />
         </div>
-
-        {/* Quick Search Bar */}
-        <div className="mt-4 flex cursor-pointer items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-400 transition-colors hover:border-zinc-300 dark:border-border dark:bg-muted/50 dark:hover:border-border/80">
-          <Search className="size-4.5 text-zinc-400" />
-          <span className="flex-1 font-normal text-zinc-400">Search...</span>
-          <kbd className="rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-[10px] font-medium text-zinc-500 shadow-2xs dark:border-border dark:bg-card">
-            ⌘K
-          </kbd>
-        </div>
       </SidebarHeader>
 
       <SidebarContent className="px-2">
@@ -80,6 +71,7 @@ const DashboardSidebar = ({ role }: { role: userRole }) => {
                   return (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
+                        render={<Link href={item.url} />}
                         isActive={isActive}
                         className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-150 ${
                           isActive
@@ -87,16 +79,14 @@ const DashboardSidebar = ({ role }: { role: userRole }) => {
                             : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-muted-foreground dark:hover:bg-accent dark:hover:text-accent-foreground"
                         }`}
                       >
-                        <Link href={item.url}>
-                          <item.icon
-                            className={`size-4.75 ${
-                              isActive
-                                ? "fill-current text-blue-600 dark:text-primary"
-                                : "text-zinc-500 dark:text-muted-foreground"
-                            }`}
-                          />
-                          <span>{item.title}</span>
-                        </Link>
+                        <item.icon
+                          className={`size-4.75 ${
+                            isActive
+                              ? "fill-current text-blue-600 dark:text-primary"
+                              : "text-zinc-500 dark:text-muted-foreground"
+                          }`}
+                        />
+                        <div>{item.title}</div>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   );

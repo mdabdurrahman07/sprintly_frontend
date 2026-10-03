@@ -1,22 +1,34 @@
-import { Kanban, LayoutGrid, Plus, PlusCircle } from "lucide-react";
+import {
+  CreditCardPlus,
+  Kanban,
+  LayoutGrid,
+  Plus,
+  PlusCircle,
+} from "lucide-react";
 import { RouteGroup } from "./sidebarRoutes";
+
+const prefix = "/manager";
 
 export const managerRoutes: RouteGroup[] = [
   {
     title: "GENERAL",
-    items: [{ title: "Dashboard", url: "/dashboard", icon: LayoutGrid }],
+    items: [{ title: "Dashboard", url: "/manager", icon: LayoutGrid }],
+  },
+  {
+    title: "PAYMENT",
+    items: [
+      { title: "Billing", url: `${prefix}/billing`, icon: CreditCardPlus },
+    ],
   },
   {
     title: "ACTIONS",
     items: [
-      { title: "Create Project", url: "/projects/new", icon: PlusCircle },
       {
-        title: "Create Task",
-        url: "/tasks/new",
-        icon: Plus,
-        variant: "sub-action",
+        title: "Create Project",
+        url: `${prefix}/projects/new`,
+        icon: PlusCircle,
       },
-      { title: "Kanban", url: "/kanban", icon: Kanban },
+      { title: "Kanban", url: `${prefix}/kanban`, icon: Kanban },
     ],
   },
 ];
