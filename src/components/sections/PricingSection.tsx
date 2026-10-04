@@ -136,7 +136,7 @@ export function PricingSection() {
                 </div>
               </div>
               <Button variant={isPro ? "primary" : "secondary"} className="w-full">
-                <Link href={`/manager/create-payment/${plan.id}`}>Choose {plan.name}</Link>
+                <Link href={`/manager/billing/my-bill/?planId=${plan.id}`}>Choose {plan.name}</Link>
               </Button>
             </Card>
           );

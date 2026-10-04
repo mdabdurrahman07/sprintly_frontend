@@ -1,18 +1,17 @@
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import CreatePayment from "@/components/Modules/Payment/CreatePayment";
 import React from "react";
 
-const billingPage = () => {
+const myBillingPage = () => {
   return (
     <div>
       <h1 className="text-2xl font-semibold">Billing</h1>
       <p>Manage Your Sprintly subscription and payments</p>
 
       <div>
-        here we will render compo
+        <CreatePayment />
       </div>
     </div>
   );
 };
 
-export default billingPage;
+export default myBillingPage;

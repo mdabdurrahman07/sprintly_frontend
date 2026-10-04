@@ -3,5 +3,5 @@ export interface ICreatePaymentPayload {
 }
 
 export interface createPaymentResponse {
-    paymentUrl: string
+    bkash: string
 }
