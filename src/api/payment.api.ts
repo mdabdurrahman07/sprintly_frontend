@@ -3,6 +3,7 @@ import { ApiResponse } from "@/types/api.types";
 import {
   createPaymentResponse,
   ICreatePaymentPayload,
+  myPaymentResponse,
 } from "@/types/payment.types";
 
 const prefix = "/payment";
@@ -18,5 +19,5 @@ export const paymentCreateApi = (payload: ICreatePaymentPayload) => {
 };
 
 export const paymentGetApi = () => {
-  return apiClient(`${prefix}/getMyPayment`, { method: "GET" });
+  return apiClient<ApiResponse<myPaymentResponse[]>>(`${prefix}/getMyPayment`, { method: "GET" });
 };

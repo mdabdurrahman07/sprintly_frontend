@@ -1,4 +1,4 @@
-import { Download, Check } from "lucide-react";
+import { Check, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -8,43 +8,42 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useGetPlans } from "@/hooks/plan.hooks";
+import type { myPaymentResponse } from "@/types/payment.types";
 
-const paymentData = [
-  {
-    id: 1,
-    plan: "Pro Plan",
-    amount: "৳999",
-    date: "Sep 24, 2026",
-    method: "bKash",
-    status: "Paid",
-  },
-  {
-    id: 2,
-    plan: "Pro Plan",
-    amount: "৳999",
-    date: "Aug 24, 2026",
-    method: "bKash",
-    status: "Paid",
-  },
-  {
-    id: 3,
-    plan: "Eco Plan",
-    amount: "৳499",
-    date: "Jul 24, 2026",
-    method: "bKash",
-    status: "Paid",
-  },
-  {
-    id: 4,
-    plan: "Eco Plan",
-    amount: "৳499",
-    date: "Jun 24, 2026",
-    method: "bKash",
-    status: "Paid",
-  },
-];
+type PaymentHistoryProps = {
+  payments: myPaymentResponse[];
+};
 
-const PaymentHistory = () => {
+const formatDate = (dateValue: string) => {
+  const date = new Date(dateValue);
+  return Number.isNaN(date.getTime())
+    ? "Date unavailable"
+    : new Intl.DateTimeFormat("en-BD", { dateStyle: "medium" }).format(date);
+};
+
+const formatAmount = (amount: string, currency: string) => {
+  const numericAmount = Number(amount);
+  if (!Number.isFinite(numericAmount)) return `${amount} ${currency}`;
+
+  return new Intl.NumberFormat("en-BD", {
+    style: "currency",
+    currency: currency || "BDT",
+    maximumFractionDigits: 0,
+  }).format(numericAmount);
+};
+
+const PaymentHistory = ({ payments }: PaymentHistoryProps) => {
+  const { data: plansResponse } = useGetPlans();
+  const plans = plansResponse?.data ?? [];
+  const sortedPayments = [...payments].sort((a, b) => {
+    const dateA = new Date(a.paidAt || a.createdAt).getTime();
+    const dateB = new Date(b.paidAt || b.createdAt).getTime();
+    const validDateA = Number.isNaN(dateA) ? 0 : dateA;
+    const validDateB = Number.isNaN(dateB) ? 0 : dateB;
+    return validDateB - validDateA;
+  });
+
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-xs dark:border-border dark:bg-card">
       {/* Header Area */}
@@ -54,17 +53,18 @@ const PaymentHistory = () => {
             Payment history
           </h3>
           <p className="mt-1 text-sm text-zinc-500 dark:text-muted-foreground">
-            View and download past invoices and transaction receipts
+            View transaction receipts
           </p>
         </div>
-        <Button
+        {/* <Button
           variant="outline"
           size="sm"
           className="rounded-full px-4 text-zinc-700 dark:text-foreground"
+          disabled={payments.length === 0}
         >
           <Download className="mr-2 size-4" />
           Download all
-        </Button>
+        </Button> */}
       </div>
 
       {/* Table Data */}
@@ -90,33 +90,59 @@ const PaymentHistory = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paymentData.map((invoice) => (
+            {sortedPayments.length > 0 ? (
+              sortedPayments.map((payment) => {
+                const planName = plans.find(({ id }) => id === payment.planId)?.name;
+                const isPaid =
+                  payment.status &&
+                  ["paid", "success", "completed"].includes(
+                    payment.status.toLowerCase(),
+                  );
+
+                return (
               <TableRow
-                key={invoice.id}
+                key={payment.id}
                 className="border-zinc-100 hover:bg-zinc-50/50 dark:border-border/50 dark:hover:bg-muted/30"
               >
                 <TableCell className="py-4 font-semibold text-zinc-900 dark:text-foreground">
-                  {invoice.plan}
+                  {planName ?? "Subscription plan"}
                 </TableCell>
                 <TableCell className="py-4 font-semibold text-zinc-900 dark:text-foreground">
-                  {invoice.amount}
+                  {formatAmount(payment.amount, payment.currency)}
                 </TableCell>
                 <TableCell className="py-4 text-zinc-500 dark:text-muted-foreground">
-                  {invoice.date}
+                  {formatDate(payment.paidAt || payment.createdAt)}
                 </TableCell>
                 <TableCell className="py-4">
                   <span className="inline-flex rounded-md bg-zinc-100 px-2 py-1 text-xs font-semibold text-zinc-600 dark:bg-muted dark:text-muted-foreground">
-                    {invoice.method}
+                    {payment.provider || "Unavailable"}
                   </span>
                 </TableCell>
                 <TableCell className="py-4 text-right">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20">
-                    <Check className="size-3.5" />
-                    {invoice.status}
+                  <span
+                    className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${
+                      isPaid
+                        ? "bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20"
+                        : "bg-zinc-100 text-zinc-600 ring-zinc-500/20 dark:bg-muted dark:text-muted-foreground"
+                    }`}
+                  >
+                    {isPaid && <Check className="size-3.5" />}
+                    {payment.status || "Unknown"}
                   </span>
                 </TableCell>
               </TableRow>
-            ))}
+                );
+              })
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={5}
+                  className="py-8 text-center text-sm text-zinc-500 dark:text-muted-foreground"
+                >
+                  No payment history yet.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
