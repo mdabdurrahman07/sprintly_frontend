@@ -25,7 +25,7 @@ export const managerRoutes: RouteGroup[] = [
     items: [
       {
         title: "Create Project",
-        url: `${prefix}/projects/new`,
+        url: `${prefix}/projects`,
         icon: PlusCircle,
       },
       { title: "Kanban", url: `${prefix}/kanban`, icon: Kanban },
