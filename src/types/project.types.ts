@@ -1,8 +1,10 @@
-export interface ProjectCreatePayload {
-  name: string;
-  description?: string;
-  files?: string[];
-}
+export type ProjectCreatePayload =
+  | FormData
+  | {
+      name: string;
+      description?: string;
+      files?: Array<File | string>;
+    };
 
 export interface ProjectUpdatePayload {
   name?: string;
