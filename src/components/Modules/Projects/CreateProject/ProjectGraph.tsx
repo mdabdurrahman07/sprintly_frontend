@@ -1,26 +1,85 @@
-import React from "react";
+import type { ProjectSummary } from "@/types/project.types";
 
-const ProjectGraph = () => {
+interface ProjectGraphProps {
+  projects: ProjectSummary[];
+  isPending: boolean;
+  isError: boolean;
+}
+
+const ProjectGraph = ({ projects, isPending, isError }: ProjectGraphProps) => {
+  const now = new Date();
+  const months = Array.from({ length: 6 }, (_, index) => {
+    const month = new Date(now.getFullYear(), now.getMonth() - 5 + index, 1);
+    return {
+      date: month,
+      label: new Intl.DateTimeFormat("en", { month: "short" }).format(month),
+      count: 0,
+    };
+  });
+
+  for (const project of projects) {
+    if (project.isDeleted) continue;
+    const createdAt = new Date(project.createdAt);
+    if (Number.isNaN(createdAt.getTime())) continue;
+    const month = months.find(
+      ({ date }) =>
+        date.getFullYear() === createdAt.getFullYear() &&
+        date.getMonth() === createdAt.getMonth(),
+    );
+    if (month) month.count += 1;
+  }
+
+  const maximum = Math.max(1, ...months.map(({ count }) => count));
+  const points = months.map(({ count }, index) => ({
+    x: (index / (months.length - 1)) * 300,
+    y: 85 - (count / maximum) * 75,
+  }));
+  const linePath = `M${points
+    .map(({ x, y }) => `${x},${y}`)
+    .join(" L")}`;
+  const areaPath = `${linePath} L300,100 L0,100 Z`;
+  const previousPeriodTotal = months
+    .slice(0, 3)
+    .reduce((total, month) => total + month.count, 0);
+  const currentPeriodTotal = months
+    .slice(3)
+    .reduce((total, month) => total + month.count, 0);
+  const periodChange =
+    previousPeriodTotal === 0
+      ? currentPeriodTotal === 0
+        ? "0%"
+        : "New"
+      : `${currentPeriodTotal >= previousPeriodTotal ? "+" : ""}${Math.round(
+          ((currentPeriodTotal - previousPeriodTotal) / previousPeriodTotal) *
+            100,
+        )}%`;
+  const currentMonthCount = months[months.length - 1].count;
+
   return (
     <div className="flex h-full flex-col justify-between rounded-2xl border border-zinc-200 bg-white p-6 shadow-xs dark:border-border dark:bg-card">
       <div className="flex items-start justify-between">
         <div>
           <h3 className="font-headline text-lg font-bold text-zinc-900 dark:text-foreground">
-            New projects this quarter
+            New projects
           </h3>
           <p className="mt-1 text-sm text-zinc-500 dark:text-muted-foreground">
-            Apr – Sep 2025 velocity
+            Projects created in the last six months
           </p>
         </div>
-        <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700 dark:bg-primary/10 dark:text-primary">
-          +50%
+        {/* <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700 dark:bg-primary/10 dark:text-primary">
+          {isPending ? "…" : isError ? "Unavailable" : periodChange}
           <br />
-          QoQ
-        </span>
+          vs prior 3 months
+        </span> */}
       </div>
 
+      {isError && (
+        <p role="alert" className="mt-5 text-sm text-destructive">
+          Project activity could not be loaded. Please try again later.
+        </p>
+      )}
+
       <div className="relative mt-8 h-[140px] w-full">
-        {/* Static SVG Chart mimicking the design */}
         <svg
           className="absolute inset-0 size-full overflow-visible"
           viewBox="0 0 300 100"
@@ -42,8 +101,6 @@ const ProjectGraph = () => {
               />
             </linearGradient>
           </defs>
-
-          {/* Grid lines */}
           <line
             x1="0"
             y1="50"
@@ -64,86 +121,58 @@ const ProjectGraph = () => {
             strokeWidth="1"
             className="text-zinc-200 dark:text-border"
           />
-
-          {/* Area Fill */}
+          <path d={areaPath} fill="url(#blueGradient)" />
           <path
-            d="M0,80 C30,75 40,70 70,70 C100,70 120,50 150,50 C180,50 210,35 240,25 C270,15 285,5 300,0 L300,100 L0,100 Z"
-            fill="url(#blueGradient)"
-          />
-
-          {/* Line */}
-          <path
-            d="M0,80 C30,75 40,70 70,70 C100,70 120,50 150,50 C180,50 210,35 240,25 C270,15 285,5 300,0"
+            d={linePath}
             fill="none"
             stroke="currentColor"
             strokeWidth="2.5"
             className="text-blue-600 dark:text-primary"
           />
-
-          {/* Data Points */}
-          <circle
-            cx="0"
-            cy="80"
-            r="3.5"
-            fill="white"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="text-blue-600 dark:text-primary"
-          />
-          <circle
-            cx="70"
-            cy="70"
-            r="3.5"
-            fill="white"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="text-blue-600 dark:text-primary"
-          />
-          <circle
-            cx="150"
-            cy="50"
-            r="3.5"
-            fill="white"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="text-blue-600 dark:text-primary"
-          />
-          <circle
-            cx="240"
-            cy="25"
-            r="3.5"
-            fill="white"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="text-blue-600 dark:text-primary"
-          />
-          <circle
-            cx="300"
-            cy="0"
-            r="3.5"
-            fill="white"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="text-blue-600 dark:text-primary"
-          />
+          {points.map(({ x, y }, index) => (
+            <circle
+              key={`${months[index].date.getFullYear()}-${months[index].date.getMonth()}`}
+              cx={x}
+              cy={y}
+              r="3.5"
+              fill="white"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="text-blue-600 dark:text-primary"
+            />
+          ))}
         </svg>
 
-        {/* X-Axis Labels */}
         <div className="absolute -bottom-6 left-0 right-0 flex justify-between text-[11px] font-medium text-zinc-400">
-          <span>Apr</span>
-          <span>May</span>
-          <span className="ml-2">Jun</span>
-          <span className="ml-4">Jul</span>
-          <span className="ml-5">Aug</span>
-          <span className="font-bold text-blue-600 dark:text-primary">Sep</span>
+          {months.map((month, index) => (
+            <span
+              key={`${month.date.getFullYear()}-${month.date.getMonth()}`}
+              className={
+                index === months.length - 1
+                  ? "font-bold text-blue-600 dark:text-primary"
+                  : undefined
+              }
+            >
+              {month.label}
+            </span>
+          ))}
         </div>
       </div>
 
       <div className="mt-10 border-t border-zinc-100 pt-4 text-xs text-zinc-500 dark:border-border/50 dark:text-muted-foreground">
-        Current Velocity{" "}
-        <span className="font-semibold text-zinc-900 dark:text-foreground">
-          6 new projects started in Sep
-        </span>
+        {isPending ? (
+          "Loading activity…"
+        ) : isError ? (
+          "Monthly activity unavailable"
+        ) : (
+          <>
+            New projects this month{" "}
+            <span className="font-semibold text-zinc-900 dark:text-foreground">
+              {currentMonthCount}{" "}
+              {currentMonthCount === 1 ? "project" : "projects"}
+            </span>
+          </>
+        )}
       </div>
     </div>
   );
