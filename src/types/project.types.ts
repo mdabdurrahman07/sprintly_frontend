@@ -56,7 +56,6 @@ export interface ProjectSummary {
   isDeleted: boolean;
   additionalFiles: ProjectFile[];
   manager: ProjectManagerSummary;
-  /** Member shape was not shared. Narrow this once you type it. */
   members: unknown[];
   tasks: TaskBase[];
 }

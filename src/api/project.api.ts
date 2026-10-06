@@ -1,5 +1,13 @@
 import apiClient from "@/lib/apiClient";
-import { ProjectCreatePayload, ProjectParams, ProjectUpdatePayload, TaskCreatePayload } from "@/types/project.types";
+import { ApiResponse } from "@/types/api.types";
+import {
+  ProjectCreatePayload,
+  ProjectParams,
+  ProjectSummary,
+  ProjectUpdatePayload,
+  TaskCreatePayload,
+} from "@/types/project.types";
+import { Task, TaskListParams } from "@/types/task.types";
 
 const prefix = "/project";
 
@@ -7,9 +15,11 @@ export const projectCreateApi = (payload: ProjectCreatePayload) => {
   return apiClient(`${prefix}/create`, { method: "POST", body: payload });
 };
 
-// TODO -> have to add the apiClient response type
 export const projectGetApi = (params: ProjectParams) => {
-  return apiClient(`${prefix}/get`, { method: "GET", params });
+  return apiClient<ApiResponse<ProjectSummary[]>>(`${prefix}/get`, {
+    method: "GET",
+    params,
+  });
 };
 
 export const projectGetByIdApi = (id: string) => {
@@ -38,12 +48,18 @@ export const projectTasksCreateApi = (
   projectId: string,
   payload: TaskCreatePayload,
 ) => {
-  return apiClient(`${prefix}/${projectId}/tasks`, {
+  return apiClient<ApiResponse<Task>>(`${prefix}/${projectId}/tasks`, {
     method: "POST",
     body: payload,
   });
 };
 
-export const projectTasksGetApi = (projectId: string) => {
-  return apiClient(`${prefix}/${projectId}/tasks`, { method: "GET" });
+export const projectTasksGetApi = (
+  projectId: string,
+  params?: TaskListParams,
+) => {
+  return apiClient<ApiResponse<Task[]>>(`${prefix}/${projectId}/tasks`, {
+    method: "GET",
+    params,
+  });
 };
