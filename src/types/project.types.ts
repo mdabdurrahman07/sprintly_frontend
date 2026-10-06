@@ -1,4 +1,4 @@
-import { TaskBase } from "./task.types";
+import { TaskBase, TaskPriority } from "./task.types";
 
 export type ProjectCreatePayload =
   | FormData

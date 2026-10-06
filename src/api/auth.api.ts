@@ -6,6 +6,8 @@ import {
   IUserLoginPayload,
   IVerifyEmailPayload,
 } from "@/types";
+import { ApiResponse } from "@/types/api.types";
+import { SessionUser } from "@/types/user.types";
 
 const prefix = "/auth";
 
@@ -37,9 +39,7 @@ export const managerVerifyApi = (payload: IVerifyEmailPayload) => {
   });
 };
 export const getMeApi = () => {
-  return apiClient(`${prefix}/me`, {
-    method: "GET",
-  });
+  return apiClient<ApiResponse<SessionUser>>(`${prefix}/me`, { method: "GET" });
 };
 
 export const refreshTokenApi = () => {
