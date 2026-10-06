@@ -1,3 +1,5 @@
+import { TaskBase } from "./task.types";
+
 export type ProjectCreatePayload =
   | FormData
   | {
@@ -21,4 +23,40 @@ export interface ProjectParams {
   limit?: number;
   searchTerm?: string;
   sortOrder?: "desc" | "asc";
+}
+
+export interface TaskCreatePayload {
+  title: string;
+  description?: string;
+  priority?: TaskPriority;
+  labels?: string[];
+}
+
+export interface ProjectFile {
+  url: string;
+  publicId: string;
+}
+
+export interface ProjectManagerSummary {
+  id: string;
+  name: string;
+  email: string;
+  managerAvatarUrl: string | null;
+}
+
+export interface ProjectSummary {
+  id: string;
+  name: string;
+  description: string | null;
+  status: string;
+  managerId: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  isDeleted: boolean;
+  additionalFiles: ProjectFile[];
+  manager: ProjectManagerSummary;
+  /** Member shape was not shared. Narrow this once you type it. */
+  members: unknown[];
+  tasks: TaskBase[];
 }
