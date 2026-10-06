@@ -43,7 +43,7 @@ const DashboardSidebar = ({ role }: { role: userRole }) => {
 
       <SidebarContent className="px-2">
         {routes.map((group) => (
-          <SidebarGroup key={group.title} className="mt-5 px-0">
+          <SidebarGroup key={group.title} className="mt-2 px-0">
             <SidebarGroupLabel className="mb-2 px-2 text-[11px] font-semibold tracking-wider text-zinc-400 uppercase">
               {group.title}
             </SidebarGroupLabel>

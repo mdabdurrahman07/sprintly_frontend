@@ -2,8 +2,8 @@ import {
   CreditCardPlus,
   Kanban,
   LayoutGrid,
-  Plus,
   PlusCircle,
+  UserRound,
 } from "lucide-react";
 import { RouteGroup } from "./sidebarRoutes";
 
@@ -12,7 +12,10 @@ const prefix = "/manager";
 export const managerRoutes: RouteGroup[] = [
   {
     title: "GENERAL",
-    items: [{ title: "Dashboard", url: "/manager", icon: LayoutGrid }],
+    items: [
+      { title: "Dashboard", url: "/manager", icon: LayoutGrid },
+      { title: "Manager Profile", url: `${prefix}/manager-profile`, icon: UserRound },
+    ],
   },
   {
     title: "PAYMENT",

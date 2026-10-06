@@ -24,21 +24,23 @@ const avatarFileSchema = z
   });
 
 export const MemberProfileUpdateSchema = z.object({
-  bio: z.string().optional(),
+  bio: z.string(),
 
-  skills: z.array(z.string()).optional(),
+  skills: z.array(z.string()),
 
-  phoneNumber: z.string().optional(),
+  phoneNumber: z.string(),
 
-  memberAvatarUrl: avatarFileSchema.optional(),
+  avatarFile: z.union([avatarFileSchema, z.undefined()]),
 });
 
 export const ManagerProfileUpdateSchema = z.object({
-  bio: z.string().optional(),
+  bio: z.string(),
 
-  phoneNumber: z.string().optional(),
+  skills: z.array(z.string()),
 
-  managerAvatarUrl: avatarFileSchema.optional(),
+  phoneNumber: z.string(),
+
+  avatarFile: z.union([avatarFileSchema, z.undefined()]),
 });
 
 export type MemberProfileUpdatePayload = z.infer<
