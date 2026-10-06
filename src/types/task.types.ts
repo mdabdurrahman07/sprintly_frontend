@@ -55,11 +55,8 @@ export interface TaskBase {
   isDeleted: boolean;
 }
 export interface Task extends TaskBase {
-  /** Missing on `GET /task/myAssigned`. */
   project?: TaskProject;
-  /** Missing on `GET /task/myAssigned`. */
   comments?: TaskCommentPreview[];
-  /** Missing on `GET /task/myAssigned`; `null` when unassigned. */
   assignee?: TaskAssignee | null;
 }
 
