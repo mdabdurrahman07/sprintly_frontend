@@ -8,6 +8,8 @@ import {
   projectTasksGetApi,
   projectUpdateApi,
 } from "@/api/project.api";
+import { KANBAN_TASK_LIMIT } from "@/lib/kanban";
+import { projectKeys, taskKeys } from "@/lib/query-keys";
 import {
   ProjectParams,
   ProjectUpdatePayload,
@@ -87,22 +89,22 @@ export const useRemoveProjectMember = () => {
 type CreateTaskVariables = { projectId: string; payload: TaskCreatePayload };
 export const useCreateProjectTask = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: ({ projectId, payload }: CreateTaskVariables) =>
       projectTasksCreateApi(projectId, payload),
-    onSuccess: (_data, { projectId }) => {
-      queryClient.invalidateQueries({
-        queryKey: ["projects", projectId, "tasks"],
-      });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: projectKeys.all }),
+        queryClient.invalidateQueries({ queryKey: taskKeys.assigned() }),
+      ]);
     },
   });
 };
 
 export const useGetProjectTasks = (projectId: string) => {
   return useQuery({
-    queryKey: ["projects", projectId, "tasks"],
-    queryFn: () => projectTasksGetApi(projectId),
+    queryKey: projectKeys.tasks(projectId),
+    queryFn: () => projectTasksGetApi(projectId, { limit: KANBAN_TASK_LIMIT }),
     enabled: Boolean(projectId),
   });
 };
