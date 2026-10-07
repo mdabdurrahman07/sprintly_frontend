@@ -29,7 +29,6 @@ export interface TaskComment {
   updatedAt: string;
   deletedAt: string | null;
   isDeleted: boolean;
-  /** Only present when the backend includes the author (see PATCHES.md). */
   member?: CommentAuthor;
 }
 
