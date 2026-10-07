@@ -35,6 +35,7 @@ import {
 } from "@/lib/kanban";
 import { cn } from "@/lib/utils";
 import type { Task, TaskStatus } from "@/types/task.types";
+import { CommentForm } from "@/components/Form/Comment/CommentForm";
 
 
 interface TaskDetailsSheetProps {
@@ -260,7 +261,7 @@ export function TaskDetailsSheet({
                               </Button>
                             )}
                           </div>
-                          <p className="mt-0.5 whitespace-pre-wrap break-words text-sm text-foreground">
+                          <p className="mt-0.5 whitespace-pre-wrap wrap-break-word text-sm text-foreground">
                             {comment.content}
                           </p>
                         </div>
@@ -271,7 +272,7 @@ export function TaskDetailsSheet({
               </section>
             </div>
 
-            {/* <CommentForm key={task.id} task={task} /> */}
+            <CommentForm key={task.id} task={task} />
           </>
         )}
       </SheetContent>
