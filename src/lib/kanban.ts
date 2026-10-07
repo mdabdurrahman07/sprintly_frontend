@@ -1,14 +1,17 @@
+
 import { ApiResponse } from "@/types/api.types";
 import {
-  KanbanRole,
-  Task,
+  TASK_PRIORITIES,
   TASK_STATUSES,
-  TaskAssignee,
-  TaskBase,
-  TaskPriority,
-  TaskStatus,
+  type KanbanRole,
+  type Task,
+  type TaskAssignee,
+  type TaskBase,
+  type TaskPriority,
+  type TaskStatus,
 } from "@/types/task.types";
 import { userRole } from "@/types/user.types";
+
 
 export const KANBAN_TASK_LIMIT = 100;
 export const MAX_LABELS = 8;
@@ -52,7 +55,6 @@ export type BoardColumns = Record<TaskStatus, Task[]>;
 
 export interface KanbanActor {
   role: KanbanRole;
-  //* Member profile id of the signed-in user; `null` for managers.
   memberId: string | null;
 }
 
@@ -63,9 +65,14 @@ export const isTaskStatus = (value: unknown): value is TaskStatus =>
   typeof value === "string" &&
   (TASK_STATUSES as readonly string[]).includes(value);
 
+export const isTaskPriority = (value: unknown): value is TaskPriority =>
+  typeof value === "string" &&
+  (TASK_PRIORITIES as readonly string[]).includes(value);
+
 const compareTasks = (a: Task, b: Task): number =>
   PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority] ||
   Date.parse(b.createdAt) - Date.parse(a.createdAt);
+
 
 export const groupTasksByStatus = (tasks: readonly Task[]): BoardColumns => {
   const columns: BoardColumns = {
@@ -81,6 +88,7 @@ export const groupTasksByStatus = (tasks: readonly Task[]): BoardColumns => {
   for (const status of TASK_STATUSES) columns[status].sort(compareTasks);
   return columns;
 };
+
 
 export const getMoveBlockedReason = (
   actor: KanbanActor,
@@ -106,6 +114,7 @@ export const canDragTask = (actor: KanbanActor, task: Task): boolean =>
     task.assigneeId === actor.memberId &&
     task.status !== "DONE");
 
+
 export const patchTaskInResponse = (
   response: ApiResponse<Task[]> | undefined,
   taskId: string,
@@ -119,6 +128,7 @@ export const patchTaskInResponse = (
     ),
   };
 };
+
 
 export const getProjectProgress = (
   tasks: readonly Pick<TaskBase, "status" | "isDeleted">[],
@@ -140,6 +150,7 @@ export const getDistinctAssignees = (
   }
   return [...byId.values()];
 };
+
 
 export const parseLabels = (input: string): string[] => {
   const labels = new Set<string>();
@@ -169,10 +180,7 @@ const RELATIVE_UNITS: readonly [Intl.RelativeTimeFormatUnit, number][] = [
   ["minute", 60],
 ];
 
-export const formatRelativeTime = (
-  iso: string,
-  now: number = Date.now(),
-): string => {
+export const formatRelativeTime = (iso: string, now: number = Date.now()): string => {
   const timestamp = Date.parse(iso);
   if (Number.isNaN(timestamp)) return "";
   const diffSeconds = Math.round((timestamp - now) / 1000);
