@@ -7,6 +7,7 @@ import ProjectGraph from "./ProjectGraph";
 import ProjectHeader from "./ProjectHeader";
 import ProjectKpiCards from "./ProjectKpiCards";
 import ProjectStatus from "./ProjectStatus";
+import ProjectTable from "../ProjectTable/ProjectTable";
 
 const CreateProjectPage = () => {
   const projectsQuery = useGetProjects({ limit: 100 });
@@ -46,6 +47,7 @@ const CreateProjectPage = () => {
           />
         </div>
       </div>
+      <ProjectTable />
     </>
   );
 };

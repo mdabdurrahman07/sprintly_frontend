@@ -18,3 +18,12 @@ export const createTaskSchema = z.object({
 });
 
 export type CreateTaskFormValues = z.infer<typeof createTaskSchema>;
+
+export const AddMemberSchema = z.object({
+  memberEmail: z
+    .string()
+    .min(1, "Email is required")
+    .email("Enter a valid email address"),
+});
+
+export const NO_TASK_MESSAGE = "No task created to assign a member. Create a task first.";

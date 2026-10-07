@@ -63,7 +63,9 @@ export interface UpdateTaskPayload {
   status: TaskStatus;
 }
 
-export type AssignTaskPayload = Record<string, unknown>;
+export type AssignTaskPayload = {
+  memberEmail: string;
+};
  
 export interface CreateCommentPayload {
   content: string;

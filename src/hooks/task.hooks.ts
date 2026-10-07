@@ -50,12 +50,6 @@ interface UpdateTaskContext {
   snapshots: TaskListSnapshot;
 }
 
-/**
- * Updates a task (the Kanban drag sends `{ status }`).
- * The card moves immediately (optimistic update) and is rolled back if the
- * request fails. Callers surface the error themselves (toast) via
- * `mutateAsync(...).catch(...)`.
- */
 export const useUpdateTask = () => {
   const queryClient = useQueryClient();
 

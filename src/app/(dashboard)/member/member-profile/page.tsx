@@ -1,3 +1,5 @@
+"use client";
+
 import { AuthLoading } from "@/components/Auth/RoleGuard";
 import ProfileCard from "@/components/Modules/Profile/ProfileCard";
 import { useGetMe } from "@/hooks";
