@@ -61,11 +61,14 @@ export const useDeleteProject = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => projectDeleteApi(id),
-    onSuccess: (_data, id) => {
-      queryClient.removeQueries({
-        queryKey: ["projects", id],
-      });
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    onSuccess: async (id) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: projectKeys.detail(id),
+          exact: true,
+        }),
+        queryClient.invalidateQueries({ queryKey: projectKeys.all }),
+      ]);
     },
   });
 };
@@ -79,7 +82,7 @@ export const useRemoveProjectMember = () => {
       projectRemoveMemberApi(projectId, memberId),
     onSuccess: (_data, { projectId }) => {
       queryClient.invalidateQueries({
-        queryKey: ["projects", projectId],
+        queryKey: projectKeys.detail(projectId),
         exact: true,
       });
     },

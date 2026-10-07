@@ -28,6 +28,7 @@ import {
   useRemoveProjectMember,
 } from "@/hooks/project.hooks";
 import { ProjectSummary } from "@/types/project.types";
+import { MemberProfile } from "@/types/user.types";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,19 +56,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { NO_TASK_MESSAGE } from "@/validators/task.validators";
 import { AddMemberDialog } from "../AddMemberDialog/AddMemberDialog";
 
-// ! SCHEMAS & UTILS
+// ==========================================
+// 1. SCHEMAS & UTILS
+// ==========================================
 
 const ProjectUpdateSchema = z.object({
   name: z.string().min(1, "Project name is required"),
-  description: z.string().optional(),
+  description: z.string(),
 });
 
-
-interface ProjectMember {
+interface ProjectMembership {
   id: string;
-  name?: string | null;
-  jobTitle?: string;
-  avatarUrl?: string;
+  memberId: string;
+  member: Pick<MemberProfile, "name" | "jobTitle">;
 }
 
 const PROJECT_ICONS = [
@@ -79,7 +80,19 @@ const PROJECT_ICONS = [
   { icon: LayoutTemplate, bg: "bg-indigo-50", text: "text-indigo-600" },
 ];
 
-// ! SUB-COMPONENT
+const PAGE_SIZE = 6;
+
+// Converts TanStack Form errors (strings or schema issue objects) into strings
+const getErrorMessages = (errors: unknown[]): string[] =>
+  errors
+    .map((err) =>
+      typeof err === "string" ? err : (err as { message?: string })?.message,
+    )
+    .filter((msg): msg is string => Boolean(msg));
+
+// ==========================================
+// 2. SUB-COMPONENTS
+// ==========================================
 
 function UpdateProjectDialog({
   project,
@@ -98,13 +111,9 @@ function UpdateProjectDialog({
       description: project.description || "",
     },
     validators: {
-      onChange: ({ value }) => {
-        const result = ProjectUpdateSchema.safeParse(value);
-        return result.success ? undefined : result.error;
-      },
+      onChange: ProjectUpdateSchema,
     },
     onSubmit: async ({ value }) => {
-      // Using standard payload object matching ProjectUpdatePayload type
       updateMutation.mutate(
         { id: project.id, payload: value },
         {
@@ -138,31 +147,34 @@ function UpdateProjectDialog({
           }}
           className="mt-4 flex flex-col gap-4"
         >
-          <form.Field
-            name="name"
-            children={(field) => (
-              <div className="flex flex-col gap-1.5">
-                <Label className="text-xs font-bold text-zinc-700 dark:text-foreground">
-                  Project Name
-                </Label>
-                <Input
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  placeholder="e.g. Core Roadmap"
-                  className="rounded-xl"
-                />
-                {field.state.meta.errors ? (
-                  <span className="text-xs text-rose-500">
-                    {field.state.meta.errors.join(", ")}
-                  </span>
-                ) : null}
-              </div>
-            )}
-          />
+          <form.Field name="name">
+            {(field) => {
+              const errors = getErrorMessages(field.state.meta.errors);
 
-          <form.Field
-            name="description"
-            children={(field) => (
+              return (
+                <div className="flex flex-col gap-1.5">
+                  <Label className="text-xs font-bold text-zinc-700 dark:text-foreground">
+                    Project Name
+                  </Label>
+                  <Input
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="e.g. Core Roadmap"
+                    className="rounded-xl"
+                  />
+                  {field.state.meta.isTouched && errors.length > 0 ? (
+                    <span className="text-xs text-rose-500">
+                      {errors.join(", ")}
+                    </span>
+                  ) : null}
+                </div>
+              );
+            }}
+          </form.Field>
+
+          <form.Field name="description">
+            {(field) => (
               <div className="flex flex-col gap-1.5">
                 <Label className="text-xs font-bold text-zinc-700 dark:text-foreground">
                   Description / Sprint Info
@@ -175,9 +187,9 @@ function UpdateProjectDialog({
                 />
               </div>
             )}
-          />
+          </form.Field>
 
-          <div className="mt-4 flex justify-end gap-3 pt-4 border-t border-zinc-100">
+          <div className="mt-4 flex justify-end gap-3 border-t border-zinc-100 pt-4">
             <Button
               type="button"
               variant="outline"
@@ -208,9 +220,10 @@ function MembersPopover({ project }: { project: ProjectSummary }) {
   const removeMemberMutation = useRemoveProjectMember();
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
-  const members = (project.members || []) as unknown as ProjectMember[];
+  const members = (project.members || []) as ProjectMembership[];
 
   const handleRemove = (memberId: string) => {
+    console.log(memberId);
     removeMemberMutation.mutate(
       { projectId: project.id, memberId },
       {
@@ -236,6 +249,7 @@ function MembersPopover({ project }: { project: ProjectSummary }) {
           render={
             <Button
               variant="outline"
+              disabled={project.isDeleted}
               className="h-9 rounded-full border-zinc-200 px-4 text-xs font-semibold text-zinc-700 shadow-2xs hover:bg-zinc-50"
             >
               <Users className="mr-2 size-4 text-zinc-400" />
@@ -247,11 +261,67 @@ function MembersPopover({ project }: { project: ProjectSummary }) {
           className="w-80 rounded-2xl p-4 shadow-xl"
           align="center"
         >
-          {/* ...header and members list unchanged... */}
+          <div className="mb-4 flex items-start justify-between">
+            <div>
+              <h4 className="text-sm font-bold text-zinc-900">
+                {project.name}{" "}
+                <span className="font-normal text-zinc-400">
+                  · Team members
+                </span>
+              </h4>
+              <p className="text-xs text-zinc-500">
+                Manage assigned collaborators
+              </p>
+            </div>
+          </div>
+
+          <div className="flex max-h-62.5 flex-col gap-3 overflow-y-auto pr-1">
+            {members.length === 0 ? (
+              <p className="py-2 text-center text-xs text-zinc-400">
+                No members yet
+              </p>
+            ) : (
+              members.map((member) => {
+                const memberName =
+                  member.member.name?.trim() || "Unknown member";
+                return (
+                  <div
+                    key={member.id}
+                    className="flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-indigo-500 text-xs font-bold text-white">
+                        {memberName.substring(0, 2).toUpperCase()}
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold leading-tight text-zinc-900">
+                          {memberName}
+                        </span>
+                        <span className="text-[11px] text-zinc-500">
+                          {member.member.jobTitle || "Member"}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRemove(member.memberId)}
+                      disabled={
+                        project.isDeleted || removeMemberMutation.isPending
+                      }
+                      className="flex size-6 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-rose-500 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <X className="size-3.5" />
+                    </button>
+                  </div>
+                );
+              })
+            )}
+          </div>
 
           <Button
             variant="outline"
             onClick={handleAddClick}
+            disabled={project.isDeleted}
             className="mt-4 w-full rounded-xl border-dashed border-blue-200 bg-transparent text-blue-600 hover:bg-blue-50 hover:text-blue-700"
           >
             <Plus className="mr-2 size-4" /> Add member
@@ -270,7 +340,9 @@ function MembersPopover({ project }: { project: ProjectSummary }) {
   );
 }
 
-// ! MAIN COMPONENT
+// ==========================================
+// 3. MAIN TABLE COMPONENT
+// ==========================================
 
 export default function ProjectTable() {
   const [page, setPage] = useState(1);
@@ -284,27 +356,33 @@ export default function ProjectTable() {
 
   // Debounce search input
   useEffect(() => {
-    const handler = setTimeout(() => setDebouncedSearch(searchTerm), 500);
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setPage(1); // reset to first page when the search changes
+    }, 500);
     return () => clearTimeout(handler);
   }, [searchTerm]);
 
   const { data, isPending } = useGetProjects({
     page,
-    limit: 6,
+    limit: PAGE_SIZE,
     searchTerm: debouncedSearch,
   });
 
-  // Extract array directly based on API response structure
   const projects = (data?.data as ProjectSummary[]) || [];
-  const totalCount = 12; // Example static count. Adjust based on your API meta response (e.g., data?.meta?.total)
+  const totalCount = data?.meta?.total ?? projects.length;
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const rangeStart = totalCount === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const rangeEnd = Math.min(page * PAGE_SIZE, totalCount);
 
   const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this project?")) {
-      deleteMutation.mutate(id, {
-        onSuccess: () => toast.success("Project deleted successfully"),
-        onError: () => toast.error("Failed to delete project"),
-      });
-    }
+    deleteMutation.mutate(id, {
+      onSuccess: () =>
+        toast.success(
+          "Project soft deleted successfully for now the project is freeze",
+        ),
+      onError: () => toast.error("Failed to delete project"),
+    });
   };
 
   return (
@@ -385,8 +463,8 @@ export default function ProjectTable() {
                     className="group border-b border-zinc-50 hover:bg-zinc-50/50 dark:border-border/20 dark:hover:bg-muted/10"
                   >
                     {/* Index */}
-                    <TableCell className="px-6 py-4 text-sm text-zinc-400 font-medium">
-                      {(page - 1) * 6 + index + 1}
+                    <TableCell className="px-6 py-4 text-sm font-medium text-zinc-400">
+                      {(page - 1) * PAGE_SIZE + index + 1}
                     </TableCell>
 
                     {/* Project Info */}
@@ -401,8 +479,8 @@ export default function ProjectTable() {
                           <span className="font-bold text-zinc-900 dark:text-foreground">
                             {project.name}
                           </span>
-                          <span className="text-xs text-zinc-500 dark:text-muted-foreground line-clamp-1">
-                            {project.description?.slice(0, 65) ||
+                          <span className="line-clamp-1 text-xs text-zinc-500 dark:text-muted-foreground">
+                            {project.description?.slice(0, 60) ||
                               "No description provided"}
                           </span>
                         </div>
@@ -411,7 +489,7 @@ export default function ProjectTable() {
 
                     {/* Files */}
                     <TableCell className="py-4">
-                      <div className="inline-flex items-center gap-1.5 rounded-full bg-zinc-50 px-3 py-1 text-xs font-semibold text-zinc-600 border border-zinc-100 dark:bg-muted dark:border-border dark:text-muted-foreground">
+                      <div className="inline-flex items-center gap-1.5 rounded-full border border-zinc-100 bg-zinc-50 px-3 py-1 text-xs font-semibold text-zinc-600 dark:border-border dark:bg-muted dark:text-muted-foreground">
                         <Paperclip className="size-3.5 text-zinc-400" />
                         {project.additionalFiles?.length || 0} files
                       </div>
@@ -428,6 +506,7 @@ export default function ProjectTable() {
                         variant="ghost"
                         size="sm"
                         onClick={() => setEditingProject(project)}
+                        disabled={project.isDeleted}
                         className="rounded-xl border border-zinc-200/60 bg-white text-zinc-500 shadow-2xs hover:bg-zinc-100 hover:text-zinc-900 dark:border-border dark:bg-card dark:hover:bg-muted"
                       >
                         <Pencil className="size-4" />
@@ -440,8 +519,8 @@ export default function ProjectTable() {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDelete(project.id)}
-                        disabled={deleteMutation.isPending}
-                        className="rounded-xl border border-zinc-200/60 bg-white text-zinc-500 shadow-2xs hover:bg-rose-50 hover:text-rose-600 hover:border-rose-100 dark:border-border dark:bg-card"
+                        disabled={project.isDeleted || deleteMutation.isPending}
+                        className="rounded-xl border border-zinc-200/60 bg-white text-zinc-500 shadow-2xs hover:border-rose-100 hover:bg-rose-50 hover:text-rose-600 dark:border-border dark:bg-card"
                       >
                         <Trash2 className="size-4" />
                       </Button>
@@ -457,7 +536,7 @@ export default function ProjectTable() {
       {/* Pagination Footer */}
       <div className="flex items-center justify-between border-t border-zinc-100 px-6 py-4 dark:border-border/50">
         <span className="text-sm text-zinc-500 dark:text-muted-foreground">
-          {/* Showing {(page - 1) * 6 + 1} to Math.min(page * 6, totalCount) of {totalCount} projects */}
+          Showing {rangeStart} to {rangeEnd} of {totalCount} projects
         </span>
         <div className="flex items-center gap-2">
           <Button
@@ -465,31 +544,33 @@ export default function ProjectTable() {
             size="sm"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="rounded-lg border-zinc-200 text-zinc-600 hover:bg-zinc-50 font-semibold"
+            className="rounded-lg border-zinc-200 font-semibold text-zinc-600 hover:bg-zinc-50"
           >
             Previous
           </Button>
 
-          <Button
-            variant="outline"
-            size="sm"
-            className="rounded-lg bg-zinc-100 border-transparent font-bold"
-          >
-            1
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="rounded-lg border-zinc-200 text-zinc-600 font-semibold hidden sm:inline-flex"
-          >
-            2
-          </Button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            <Button
+              key={p}
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(p)}
+              className={
+                p === page
+                  ? "rounded-lg border-transparent bg-zinc-100 font-bold"
+                  : "hidden rounded-lg border-zinc-200 font-semibold text-zinc-600 sm:inline-flex"
+              }
+            >
+              {p}
+            </Button>
+          ))}
 
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setPage((p) => p + 1)}
-            className="rounded-lg border-zinc-200 text-zinc-600 hover:bg-zinc-50 font-semibold"
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page >= totalPages}
+            className="rounded-lg border-zinc-200 font-semibold text-zinc-600 hover:bg-zinc-50"
           >
             Next
           </Button>
