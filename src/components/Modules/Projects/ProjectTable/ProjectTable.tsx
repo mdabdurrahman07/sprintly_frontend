@@ -369,7 +369,9 @@ export default function ProjectTable() {
     searchTerm: debouncedSearch,
   });
 
-  const projects = (data?.data as ProjectSummary[]) || [];
+  const projects = ((data?.data as ProjectSummary[]) || []).filter(
+    (project) => !project.isDeleted,
+  );
   const totalCount = data?.meta?.total ?? projects.length;
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
   const rangeStart = totalCount === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;

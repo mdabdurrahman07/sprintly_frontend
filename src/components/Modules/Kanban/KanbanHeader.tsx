@@ -105,7 +105,7 @@ export function KanbanHeader({
           <DropdownMenuContent align="start" className="w-72 rounded-2xl p-1.5">
             {allowAllProjects && (
               <DropdownMenuItem
-                onSelect={() => onProjectChange(null)}
+                onClick={() => onProjectChange(null)}
                 className="flex items-center justify-between rounded-xl px-3 py-2.5"
               >
                 <span className="text-xs font-bold text-foreground">
@@ -122,7 +122,7 @@ export function KanbanHeader({
               return (
                 <DropdownMenuItem
                   key={project.id}
-                  onSelect={() => onProjectChange(project.id)}
+                  onClick={() => onProjectChange(project.id)}
                   className={cn(
                     "flex items-center justify-between gap-3 rounded-xl px-3 py-2.5",
                     isSelected &&

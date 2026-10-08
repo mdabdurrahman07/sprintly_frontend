@@ -57,7 +57,10 @@ export function KanbanView({ createProjectHref }: KanbanViewProps) {
   const memberId = memberProfile?.id ?? null;
 
   const projectsQuery = useGetProjects(PROJECT_PARAMS);
-  const projects = useMemo(() => projectsQuery.data?.data ?? [], [projectsQuery.data]);
+  const projects = useMemo(
+    () => (projectsQuery.data?.data ?? []).filter((project) => !project.isDeleted),
+    [projectsQuery.data],
+  );
 
   const [projectSelection, setProjectSelection] = useState<string | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority[]>([]);
@@ -65,9 +68,14 @@ export function KanbanView({ createProjectHref }: KanbanViewProps) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   // Managers always have a project selected (first one by default); members default to "all projects".
+  const selectedProjectId = projects.some(
+    (project) => project.id === projectSelection,
+  )
+    ? projectSelection
+    : null;
   const activeProjectId = isManager
-    ? (projectSelection ?? projects[0]?.id ?? null)
-    : projectSelection;
+    ? (selectedProjectId ?? projects[0]?.id ?? null)
+    : selectedProjectId;
 
   const managerTasksQuery = useGetProjectTasks(isManager && activeProjectId ? activeProjectId : "");
   const memberTasksQuery = useGetMyAssignedTask({ enabled: role === "MEMBER" });
