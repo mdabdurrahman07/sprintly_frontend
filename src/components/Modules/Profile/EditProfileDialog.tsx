@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import { Camera, Loader2, X, Plus } from "lucide-react";
@@ -34,6 +34,7 @@ export function EditProfileDialog({
   const isManager = user.role === "MANAGER";
   const profile = isManager ? user.managerProfile : user.memberProfile;
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  const [newSkill, setNewSkill] = useState("");
 
   const updateMemberMutation = useUpdateMemberProfile();
   const updateManagerMutation = useUpdateManagerProfile();
@@ -208,7 +209,6 @@ export function EditProfileDialog({
               name="skills"
               children={(field) => {
                 const skillsList = field.state.value || [];
-                const [newSkill, setNewSkill] = React.useState("");
 
                 const addSkill = () => {
                   if (newSkill.trim() && !skillsList.includes(newSkill.trim())) {
