@@ -1,3 +1,4 @@
+import { memberRoutes } from './memberRoutes';
 import { LucideIcon } from "lucide-react";
 import { managerRoutes } from "./managerRoutes";
 
@@ -15,6 +16,6 @@ export type RouteGroup = {
 
 export const sidebarRoutes: Partial<Record<string, RouteGroup[]>> = {
 //   ADMIN: managerRoutes,
-//   MEMBER: managerRoutes,
+  MEMBER: memberRoutes,
   MANAGER: managerRoutes,
 };
