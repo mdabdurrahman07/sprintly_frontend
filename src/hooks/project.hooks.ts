@@ -63,7 +63,7 @@ export const useDeleteProject = () => {
     mutationFn: (id: string) => projectDeleteApi(id),
     onSuccess: async (id) => {
       await Promise.all([
-        queryClient.invalidateQueries({
+        queryClient.removeQueries({
           queryKey: projectKeys.detail(id),
           exact: true,
         }),

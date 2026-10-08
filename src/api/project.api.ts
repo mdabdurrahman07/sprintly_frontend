@@ -34,7 +34,7 @@ export const projectUpdateApi = (id: string, payload: ProjectUpdatePayload) => {
 };
 
 export const projectDeleteApi = (id: string) => {
-  return apiClient(`${prefix}/del/${id}`, { method: "PATCH" });
+  return apiClient(`${prefix}/del/${id}/project`, { method: "DELETE" });
 };
 
 export const projectRemoveMemberApi = (projectId: string, memberId: string) => {
