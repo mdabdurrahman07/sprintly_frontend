@@ -1,9 +1,10 @@
+import MemberDashboard from "@/components/Modules/Member/Dashboard/MemberDashboard";
 import React from "react";
 
 const memberDashboardHomePage = () => {
   return (
     <div>
-      <h1>This is MemberDashboard Home</h1>
+     <MemberDashboard/>
     </div>
   );
 };

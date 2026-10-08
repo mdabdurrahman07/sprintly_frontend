@@ -79,8 +79,6 @@ export const useUpdateTask = () => {
       });
     },
     onSettled: async (_data, _error, { id }) => {
-      // While several drags are in flight, only the last one refetches;
-      // otherwise an early response would overwrite a later optimistic move.
       if (queryClient.isMutating({ mutationKey: taskMutationKeys.update }) > 1) return;
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: projectKeys.all }),
