@@ -1,4 +1,5 @@
 export type userRole = "MEMBER" | "MANAGER" | "ADMIN";
+export type userStatus = "ACTIVE" | "BLOCKED" | "DELETED"
 export interface MemberProfile {
   id: string;
   name: string;
