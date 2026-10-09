@@ -37,7 +37,7 @@ export function Navbar() {
         toast.success("Good Bye", {
           description: "Logged out successfully",
         });
-        queryClient.removeQueries({ queryKey: ["user"] });
+        queryClient.removeQueries({ queryKey: ["users"] });
       },
       onError: () => {
         toast.error("Logout failed", {
