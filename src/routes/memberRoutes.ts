@@ -9,7 +9,7 @@ export const memberRoutes: RouteGroup[] = [
     items: [
       { title: "Dashboard", url: "/member", icon: LayoutGrid },
       {
-        title: "Manager Profile",
+        title: "Member Profile",
         url: `${prefix}/member-profile`,
         icon: UserRound,
       },
