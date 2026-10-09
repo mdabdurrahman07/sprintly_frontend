@@ -140,15 +140,15 @@ export function Footer() {
         </div>
 
         <div className="border-t border-border pt-8 mt-10 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
-          <span>© 2026 Sprintly Inc. All rights reserved.</span>
+          <span>© 2026 Sprintly Inc. All rights reserved. Design and Develop by MD Abdur Rahman Nur Jamil</span>
           <div className="flex items-center gap-6">
-            <Link href="#" className="hover:text-foreground transition">
+            <Link href="https://x.com/mabdurrahman07" className="hover:text-foreground transition">
               Twitter
             </Link>
-            <Link href="#" className="hover:text-foreground transition">
+            <Link href="https://github.com/mdabdurrahman07" className="hover:text-foreground transition">
               GitHub
             </Link>
-            <Link href="#" className="hover:text-foreground transition">
+            <Link href="https://www.linkedin.com/in/mdabdurrahman-dev/" className="hover:text-foreground transition">
               LinkedIn
             </Link>
           </div>

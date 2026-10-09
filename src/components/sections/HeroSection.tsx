@@ -30,21 +30,6 @@ export function HeroSection() {
         </Button>
       </div>
 
-      <p className="text-xs text-muted-foreground flex items-center justify-center gap-1.5 mb-14">
-        <svg
-          className="w-4 h-4 text-success"
-          fill="none"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2.5"
-          viewBox="0 0 24 24"
-        >
-          <path d="M20 6L9 17l-5-5"></path>
-        </svg>
-        No credit card required · 14-day free trial
-      </p>
-
       {/* Floating Kanban Preview */}
       <div className="max-w-5xl mx-auto bg-card rounded-2xl p-4 md:p-6 shadow-[0_20px_50px_rgba(37,99,235,0.07),0_4px_16px_rgba(0,0,0,0.04)] border border-border text-left">
         <div className="flex items-center justify-between pb-4 mb-4 border-b border-border">

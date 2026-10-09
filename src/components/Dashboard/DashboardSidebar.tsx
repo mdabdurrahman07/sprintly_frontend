@@ -13,16 +13,50 @@ import {
   SidebarFooter,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { Search, ChevronsUpDown, Settings } from "lucide-react";
+import { ChevronsUpDown, LogOut } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { sidebarRoutes } from "@/routes/sidebarRoutes";
 import { userRole } from "@/types/user.types";
 import Link from "next/link";
 import Logo from "../shared/Logo";
+import { useGetMe, useLogout } from "@/hooks";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 const DashboardSidebar = ({ role }: { role: userRole }) => {
   const pathname = usePathname();
   const routes = sidebarRoutes[role] || [];
+  const { data } = useGetMe();
+  const { mutate: logout, isPending: isLoggingOut } = useLogout();
+  const queryClient = useQueryClient();
+  const user = data?.data;
+  const displayRole = (user?.role ?? role).toLowerCase();
+  const initials =
+    user?.name
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase() || "?";
+
+  const handleLogout = () => {
+    logout(undefined, {
+      onSuccess: () => {
+        toast.success("Good Bye", {
+          description: "Logged out successfully",
+        });
+        queryClient.removeQueries({ queryKey: ["user"] });
+      },
+      onError: () => {
+        toast.error("Logout failed", {
+          description: "Something Went Wrong",
+        });
+      },
+    });
+  };
+
   return (
     <Sidebar className="w-65 border-r border-zinc-200 bg-white dark:bg-background dark:border-border select-none">
       <SidebarHeader className="px-4 pt-4 pb-2 space-y-4">
@@ -101,24 +135,28 @@ const DashboardSidebar = ({ role }: { role: userRole }) => {
         <div className="flex items-center justify-between px-1">
           <div className="flex min-w-0 items-center gap-2.5">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-900 font-headline text-xs font-semibold text-white dark:bg-foreground dark:text-background">
-              RI
+              {initials}
             </div>
             <div className="min-w-0">
               <p className="truncate text-xs font-semibold leading-snug text-zinc-900 dark:text-foreground">
-                Rafiul Islam
+                {user?.name ?? "Loading..."}
               </p>
               <p className="truncate text-[11px] leading-tight text-zinc-500 dark:text-muted-foreground">
-                Manager
+                {displayRole.charAt(0).toUpperCase() + displayRole.slice(1)}
               </p>
             </div>
           </div>
-          <button
-            aria-label="Settings"
+          <Button
             type="button"
-            className="rounded-md p-1.5 text-zinc-400 transition-colors duration-150 hover:bg-zinc-100 hover:text-zinc-700 dark:hover:bg-accent dark:hover:text-accent-foreground"
+            size="sm"
+            variant="secondary"
+            disabled={isLoggingOut}
+            onClick={handleLogout}
+            className="ml-2 shrink-0 gap-1.5 px-2.5 text-red-600 hover:text-red-700"
           >
-            <Settings className="size-4.75" />
-          </button>
+            <LogOut className="size-3.5" />
+            Logout
+          </Button>
         </div>
       </SidebarFooter>
 
