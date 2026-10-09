@@ -18,7 +18,7 @@ const LOGIN_PATH = "/login";
  * public page (for example a navbar calling useGetMe while logged out)
  * must not redirect.
  */
-const PROTECTED_PATH_PREFIXES: readonly string[] = ["/dashboard"];
+const PROTECTED_PATH_PREFIXES: readonly string[] = ["/admin", "manager", "member"];
 
 /** Several in-flight queries can fail together; redirect only once. */
 let isRedirectingToLogin = false;
