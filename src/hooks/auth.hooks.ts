@@ -38,7 +38,7 @@ export const useVerifyManager = () => {
 };
 export const useGetMe = () => {
   return useQuery({
-    queryKey: ["user"],
+    queryKey: ["users"],
     queryFn: getMeApi,
     retry: false,
   });

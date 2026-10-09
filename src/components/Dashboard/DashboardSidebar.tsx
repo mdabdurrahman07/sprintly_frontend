@@ -14,7 +14,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { ChevronsUpDown, LogOut } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { sidebarRoutes } from "@/routes/sidebarRoutes";
 import { userRole } from "@/types/user.types";
 import Link from "next/link";
@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
 const DashboardSidebar = ({ role }: { role: userRole }) => {
+  const router = useRouter()
   const pathname = usePathname();
   const routes = sidebarRoutes[role] || [];
   const { data } = useGetMe();
@@ -47,7 +48,8 @@ const DashboardSidebar = ({ role }: { role: userRole }) => {
         toast.success("Good Bye", {
           description: "Logged out successfully",
         });
-        queryClient.removeQueries({ queryKey: ["user"] });
+        queryClient.removeQueries({ queryKey: ["users"] });
+        router.push("/")
       },
       onError: () => {
         toast.error("Logout failed", {

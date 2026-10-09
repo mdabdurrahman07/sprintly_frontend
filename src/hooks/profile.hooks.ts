@@ -22,7 +22,7 @@ export const useUpdateManagerProfile = () => {
     mutationFn: (payload: FormData | IManagerProfileUpdate) =>
       updateManagerProfile(payload as IManagerProfileUpdate),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
 };
