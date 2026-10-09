@@ -26,7 +26,10 @@ const buildQueryString = (params: object = {}): string => {
 
 export const getAllUsersApi = (params: AdminUsersParams = {}) => {
   return apiClient<ApiResponse<AdminUser[]>>(
-    `${prefix}/users${buildQueryString(params)}`,
+    `${prefix}/users${buildQueryString({
+      ...params,
+      search: params.searchTerm,
+    })}`,
     { method: "GET" },
   );
 };
@@ -36,7 +39,7 @@ export const updateUserStatusApi = (
   payload: UpdateUserStatusPayload,
 ) => {
   return apiClient<ApiResponse<AdminUserBase>>(
-    `${prefix}/${encodeURIComponent(id)}/status`,
+    `${prefix}/users/${encodeURIComponent(id)}/status`,
     { method: "PATCH", body: payload },
   );
 };
