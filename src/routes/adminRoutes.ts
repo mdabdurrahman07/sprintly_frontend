@@ -3,7 +3,7 @@ import { RouteGroup } from "./sidebarRoutes";
 
 const prefix = "/admin";
 
-export const memberRoutes: RouteGroup[] = [
+export const adminRoutes: RouteGroup[] = [
   {
     title: "GENERAL",
     items: [{ title: "Dashboard", url: "/admin", icon: LayoutGrid }],
