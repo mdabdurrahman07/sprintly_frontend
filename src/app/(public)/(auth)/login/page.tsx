@@ -35,7 +35,7 @@ const LoginPage = () => {
           <div className="space-y-5">
             <SectionBadge icon={true} content="AGILE WORKSPACES" />
 
-            <h1 className="text-4xl sm:text-[42px] font-bold tracking-tight text-zinc-900 leading-[1.18]">
+            <h1 className="text-4xl sm:text-[42px] font-bold tracking-tight text-zinc-900 dark:text-white leading-[1.18]">
               Get your team organized in minutes
             </h1>
 

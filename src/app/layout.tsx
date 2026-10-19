@@ -30,6 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={cn(
         "h-full",
         "antialiased",
@@ -39,12 +40,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         ibmPlexSans.variable,
       )}
     >
-      <Providers>
-        <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col">
+        <Providers>
           {children}
           <Toaster position="top-center" richColors />
-        </body>
-      </Providers>
+        </Providers>
+      </body>
     </html>
   );
 }
