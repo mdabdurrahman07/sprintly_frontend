@@ -4,6 +4,7 @@ import Link from "next/link";
 import { SectionHeader, Heading, Text } from "@/components/ui/typography";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useGetPlans } from "@/hooks/plan.hooks";
 import type { SubscriptionPlan } from "@/types/plan.types";
 
@@ -48,9 +49,70 @@ export function PricingSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto gap-8 items-stretch">
         {isPending && (
-          <p className="md:col-span-2 text-center text-sm text-muted-foreground">
-            Loading plans...
-          </p>
+          <div
+            role="status"
+            aria-label="Loading plans"
+            aria-busy="true"
+            className="md:col-span-2"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch" aria-hidden="true">
+              {[0, 1].map((planIndex) => {
+                const isPro = planIndex === 1;
+
+                return (
+                  <Card
+                    key={planIndex}
+                    className={`p-8 flex flex-col justify-between relative ${
+                      isPro
+                        ? "bg-primary-subtle/50 border-2 border-primary/40 shadow-lg"
+                        : ""
+                    }`}
+                  >
+                    {isPro && (
+                      <div className="absolute -top-3.5 right-6">
+                        <Skeleton className="h-6 w-28 rounded-full" />
+                      </div>
+                    )}
+
+                    <div>
+                      <div className="mb-4 space-y-2">
+                        <Skeleton className="h-3 w-10" />
+                        <Skeleton className="h-8 w-28" />
+                      </div>
+                      <div className="mb-3 flex items-baseline gap-2">
+                        <Skeleton className="h-10 w-32" />
+                        <Skeleton className="h-4 w-12" />
+                      </div>
+                      <div className="mb-6 space-y-2">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-4/5" />
+                      </div>
+
+                      <div
+                        className={`border-t ${
+                          isPro ? "border-primary-border" : "border-border"
+                        } pt-6 mb-8`}
+                      >
+                        <ul className="space-y-3.5">
+                          {Array.from({ length: 5 }, (_, featureIndex) => (
+                            <li key={featureIndex} className="flex items-center gap-3">
+                              <Skeleton className="h-4 w-4 shrink-0 rounded-full" />
+                              <Skeleton
+                                className={`h-4 ${
+                                  featureIndex % 2 === 0 ? "w-3/4" : "w-2/3"
+                                }`}
+                              />
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                    <Skeleton className="h-10 w-full rounded-md" />
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
         )}
         {isError && (
           <p className="md:col-span-2 text-center text-sm text-muted-foreground">
