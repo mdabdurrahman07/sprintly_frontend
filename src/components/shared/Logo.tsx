@@ -5,7 +5,7 @@ const Logo = () => {
   return (
     <div className="flex items-center gap-1.5">
       <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-sm transition-transform group-hover:scale-105">
-        <Zap className="text-background" />
+        <Zap className="text-background dark:text-white" />
       </div>
       <div className="font-heading text-lg font-bold tracking-tight text-foreground">Sprintly</div>
     </div>
